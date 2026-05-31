@@ -368,4 +368,5 @@ Todos los endpoints retornan las siguientes cabeceras personalizadas:
 
 ```
 X-App-Name: device_systems
-X-API-Version: 2.0
+X-API-Version: 1.0
+```
