@@ -370,3 +370,7 @@ Todos los endpoints retornan las siguientes cabeceras personalizadas:
 X-App-Name: device_systems
 X-API-Version: 2.0
 ```
+
+###  Sustentación en Video sobre la Actividad 7
+
+*   **Enlace al video (Loom):** https://www.loom.com/share/87e20ffdf47142a6ad4916dd32e030a1
