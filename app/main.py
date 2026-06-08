@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from app.database.connection import create_tables
 from app.routes import user_routes
 
 app = FastAPI(
@@ -9,6 +10,9 @@ app = FastAPI(
         "name": "Samuel Moreno"
     }
 )
+
+# NUEVO: Ejecuta la creación automática de tablas en la base de datos al arrancar
+create_tables()
 
 app.include_router(user_routes.router)
 
