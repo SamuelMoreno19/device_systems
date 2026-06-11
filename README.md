@@ -20,7 +20,7 @@ API REST construida con **FastAPI** y **SQLAlchemy** para la gestión del recurs
 
 > _Captura de la estructura del proyecto en el editor de código._
 
-![Estructura del proyecto](images/00_estructura.png)
+![Estructura del proyecto](images/01.png)
 
 ```
 device_systems/
@@ -88,7 +88,7 @@ Al ejecutar el servidor por primera vez se genera automáticamente el archivo `d
 
 > _Captura del archivo `device_systems.db` generado y su tabla `usuarios` vista desde un cliente SQLite._
 
-![Base de datos generada](images/00_database.png)
+![Base de datos generada](images/02.png)
 
 ---
 
