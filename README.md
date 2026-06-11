@@ -260,69 +260,93 @@ DELETE http://127.0.0.1:8000/users/1
 
 ---
 
-## Capturas de Swagger UI
+## 🖼️ Capturas
 
-### 1. Vista general de Swagger UI
+### 1. Estructura del proyecto
 
-> _Vista de todos los endpoints disponibles en la documentación interactiva._
+> _Vista de la organización de carpetas y archivos del proyecto en el editor de código._
 
-![Swagger UI - Vista general](images/01_swagger.png)
-
----
-
-### 2. GET `/users` — Listar usuarios
-
-> _Evidencia de la ejecución del endpoint GET /users retornando la lista de usuarios desde la DB._
-
-![GET /users](images/02_get_users.png)
+![Estructura del proyecto](images/01.png)
 
 ---
 
-### 3. GET `/users/{user_id}` — Consultar por ID
+### 2. Base de datos generada
 
-> _Evidencia de la consulta de un usuario específico mediante su ID._
+> _Archivo `device_systems.db` generado automáticamente al arrancar el servidor, con la tabla `usuarios` visible desde un cliente SQLite._
 
-![GET /users/{user_id}](images/03_get_user_id.png)
-
----
-
-### 4. POST `/users` — Registrar usuario
-
-> _Evidencia del registro exitoso de un nuevo usuario persistido en la base de datos._
-
-![POST /users](images/04_post_users.png)
+![Base de datos generada](images/02.png)
 
 ---
 
-### 5. PUT `/users/{user_id}` — Actualización completa
+### 3. Swagger UI — Vista general
 
-> _Evidencia de la actualización completa de un usuario en la DB._
+> _Vista de todos los endpoints disponibles en la documentación interactiva de FastAPI._
 
-![PUT /users/{user_id}](images/05_put_user.png)
-
----
-
-### 6. PATCH `/users/{user_id}` — Actualización parcial
-
-> _Evidencia de la actualización parcial enviando solo los campos a modificar._
-
-![PATCH /users/{user_id}](images/06_patch_user.png)
+![Swagger UI - Vista general](images/03.png)
 
 ---
 
-### 7. DELETE `/users/{user_id}` — Eliminar usuario
+### 4. GET `/users` — Listar usuarios
 
-> _Evidencia de la eliminación permanente de un usuario de la base de datos._
+> _Evidencia del endpoint GET /users retornando la lista de usuarios desde la base de datos._
 
-![DELETE /users/{user_id}](images/07_delete_user.png)
+![GET /users](images/04.png)
 
 ---
 
-### 8. Error controlado — Correo duplicado
+### 5. GET `/users/{user_id}` — Consultar por ID
 
-> _Evidencia del manejo de error al intentar registrar un correo ya existente, retornando 400 Bad Request._
+> _Evidencia de la consulta de un usuario específico mediante su ID como Path Parameter._
 
-![Error correo duplicado](images/08_error_duplicado.png)
+![GET /users/{user_id}](images/05.png)
+
+---
+
+### 6. POST `/users` — Registrar usuario
+
+> _Evidencia del registro exitoso de un nuevo usuario persistido en la base de datos, con respuesta 201 Created._
+
+![POST /users](images/06.png)
+
+---
+
+### 7. PUT `/users/{user_id}` — Actualización completa
+
+> _Evidencia de la actualización completa de un usuario reemplazando todos sus campos, con respuesta 200 OK._
+
+![PUT /users/{user_id}](images/07.png)
+
+---
+
+### 8. PATCH `/users/{user_id}` — Actualización parcial
+
+> _Evidencia de la actualización parcial enviando solo los campos a modificar, con respuesta 200 OK._
+
+![PATCH /users/{user_id}](images/08.png)
+
+---
+
+### 9. DELETE `/users/{user_id}` — Eliminar usuario
+
+> _Evidencia de la eliminación permanente de un usuario de la base de datos, con respuesta 204 No Content._
+
+![DELETE /users/{user_id}](images/09.png)
+
+---
+
+### 10. Error — Correo duplicado (400)
+
+> _Evidencia del error al intentar registrar un correo ya existente, retornando 400 Bad Request._
+
+![Error correo duplicado](images/10.png)
+
+---
+
+### 11. Error — Datos inválidos (422)
+
+> _Evidencia del error al enviar datos que no cumplen las validaciones de Pydantic, retornando 422 Unprocessable Entity._
+
+![Error datos inválidos](images/11.png)
 
 ---
 

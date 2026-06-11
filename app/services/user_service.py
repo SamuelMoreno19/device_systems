@@ -7,7 +7,13 @@ from fastapi import HTTPException, status
 class UserService:
     
     @staticmethod
-    def listar_usuarios(db: Session, role: Optional[str] = None, is_active: Optional[bool] = None) -> List[Usuario]:
+    @staticmethod
+    def listar_usuarios(
+        db: Session, 
+        role: Optional[str] = None, 
+        is_active: Optional[bool] = None,
+        order_by: Optional[str] = "name" # ⚠️ ESTE ERA EL QUE FALTABA
+    ) -> List[Usuario]:
         # 1. Preparamos la consulta base (Es como un SELECT * FROM usuarios)
         query = db.query(Usuario)
         
@@ -18,6 +24,12 @@ class UserService:
         # 3. Si mandan filtro de estado activo, lo aplicamos en el WHERE
         if is_active is not None:
             query = query.filter(Usuario.is_active == is_active)
+            
+        # ⚠️ NUEVO: Aplicamos el ordenamiento que exige la Fase 8
+        if order_by == "created_at":
+            query = query.order_by(Usuario.created_at.desc()) # De los más nuevos a los más viejos
+        else:
+            query = query.order_by(Usuario.name.asc()) # Alfabéticamente por nombre
             
         # 4. Ejecutamos la consulta y retornamos la lista de registros
         return query.all()
