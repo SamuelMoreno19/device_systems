@@ -82,7 +82,7 @@ Documentación ReDoc: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
 
 ---
 
-## 🗄️ Base de datos generada
+## Base de datos generada
 
 Al ejecutar el servidor por primera vez se genera automáticamente el archivo `device_systems.db` en la raíz del proyecto. Este archivo es la base de datos SQLite que almacena de forma persistente todos los usuarios registrados.
 
@@ -260,7 +260,7 @@ DELETE http://127.0.0.1:8000/users/1
 
 ---
 
-## 🖼️ Capturas
+## Capturas
 
 ### 1. Estructura del proyecto
 
