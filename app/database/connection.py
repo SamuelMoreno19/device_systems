@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
 
 # 1. Dirección de nuestra base de datos local (creará un archivo llamado test.db)
-SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
+SQLALCHEMY_DATABASE_URL = "sqlite:///./device_systems.db"
 
 # 2. Crear el motor de conexión (El puente físico)
 engine = create_engine(

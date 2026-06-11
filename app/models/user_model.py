@@ -1,4 +1,6 @@
-from sqlalchemy import Column, Integer, String, Boolean
+from datetime import datetime, timezone # <--- Importamos timezone
+
+from sqlalchemy import Column, DateTime, Integer, String, Boolean
 from app.database.connection import Base
 
 # Creamos la clase Usuario que hereda de Base (la mamá de los modelos)
@@ -12,3 +14,4 @@ class Usuario(Base):
     email = Column(String, unique=True, nullable=False, index=True)
     role = Column(String, nullable=False)
     is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
