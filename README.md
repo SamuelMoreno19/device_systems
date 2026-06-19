@@ -855,4 +855,8 @@ X-App-Name: device_systems
 X-API-Version: 4.0
 ```
 
+###  Sustentación en Video sobre la Actividad 10
+
+*   **Enlace al video (Loom):** https://www.loom.com/share/6d9cb654234949b1a423f6cf2d9b4b12
+
 ---
