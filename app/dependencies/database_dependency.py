@@ -1,19 +1,19 @@
 from fastapi import HTTPException, status, Depends
 from sqlalchemy.orm import Session
-from app.database.connection import SessionLocal  # Importamos la fábrica local
+from app.database.connection import SessionLocal # Importamos la fábrica local
 from app.models.user_model import Usuario
 
-# 1. La función que abre y cierra la sesión de la DB (Nuestra llave del ciclo de vida)
+# 1. Función generadora de sesiones con ciclo de vida controlado
 def get_db():
-    db = SessionLocal()
+    db = SessionLocal() # Abre la puerta a la base de datos
     try:
-        yield db
+        yield db # Te presta la sesión para que la uses en tu endpoint
     finally:
-        db.close()
+        db.close() # Pase lo que pase, cuando la petición termine, cierra la puerta
 
-# 2. Dependencia para buscar un usuario por ID en la DB real o disparar 404
+# 2. Dependencia para buscar un usuario por ID en la DB real o disparar 404 de una
 def get_user_or_404(user_id: int, db: Session = Depends(get_db)) -> Usuario:
-    # Hacemos un SELECT * FROM usuarios WHERE id = user_id LIMIT 1
+    # Hace un SELECT * FROM usuarios WHERE id = user_id LIMIT 1
     usuario = db.query(Usuario).filter(Usuario.id == user_id).first()
     
     if not usuario:
@@ -25,10 +25,9 @@ def get_user_or_404(user_id: int, db: Session = Depends(get_db)) -> Usuario:
 
 # 3. Dependencia para verificar si un correo ya está en uso por otro usuario
 def verificar_correo_duplicado(email: str, db: Session, excluir_id: int = None):
-    # Buscamos si existe algún usuario con ese correo
     query = db.query(Usuario).filter(Usuario.email == email)
     
-    # Si estamos editando (PUT/PATCH), le decimos que ignore el ID del mismo usuario
+    # Si estamos editando (PUT/PATCH), le decimos que ignore el ID del mismo usuario que se está editando
     if excluir_id is not None:
         query = query.filter(Usuario.id != excluir_id)
         
