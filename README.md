@@ -484,5 +484,375 @@ Todos los endpoints retornan las siguientes cabeceras personalizadas:
 
 ```
 X-App-Name: device_systems
-X-API-Version: 2.0
+X-API-Version: 3.0
 ```
+
+---------------------------------------------------------
+
+# device_systems — Sistema de Gestión de Préstamos de Dispositivos v4.0
+
+API REST construida con **FastAPI**, **SQLAlchemy** y **Alembic** para la gestión de un sistema de préstamos de dispositivos. El proyecto evoluciona el recurso `users` original incorporando dos nuevas entidades relacionadas — `devices` y `loans` — junto con migraciones de base de datos versionadas, relaciones uno-a-muchos, consultas con JOIN y filtros avanzados.
+
+---
+
+## Tecnologías utilizadas
+
+- **Python 3.x**
+- **FastAPI 0.110+** — Framework web para construir la API
+- **Uvicorn 0.28+** — Servidor ASGI
+- **SQLAlchemy 2.x** — ORM y definición de relaciones entre tablas
+- **Alembic** — Sistema de migraciones para versionar el esquema de la base de datos
+- **SQLite** — Base de datos relacional
+- **Pydantic v2** — Validación y serialización de datos
+
+---
+
+## Estructura del proyecto
+
+```
+device_systems/
+│── alembic/
+│   │── versions/
+│   └── env.py
+│── alembic.ini
+│── app/
+│   │── main.py
+│   │── database/
+│   │   └── connection.py
+│   │── models/
+│   │   │── user_model.py
+│   │   │── device_model.py
+│   │   └── loan_model.py
+│   │── schemas/
+│   │   │── user_schema.py
+│   │   │── device_schema.py
+│   │   └── loan_schema.py
+│   │── routes/
+│   │   │── user_routes.py
+│   │   │── device_routes.py
+│   │   └── loan_routes.py
+│   │── services/
+│   │   │── user_service.py
+│   │   │── device_service.py
+│   │   └── loan_service.py
+│   └── dependencies/
+│       └── database_dependency.py
+│── device_systems.db
+│── requirements.txt
+└── README.md
+```
+
+---
+
+## Instalación de dependencias
+
+```bash
+git clone https://github.com/tu-usuario/device_systems.git
+cd device_systems
+pip install -r requirements.txt
+```
+
+Contenido del `requirements.txt`:
+
+```
+fastapi>=0.110.0
+uvicorn>=0.28.0
+pydantic[email]>=2.6.0
+sqlalchemy>=2.0.0
+alembic>=1.13.0
+```
+
+---
+
+## Migraciones con Alembic
+
+Este proyecto usa **Alembic** para versionar los cambios en el esquema de la base de datos, en lugar de depender únicamente de `Base.metadata.create_all()`. Esto permite llevar un historial de cada cambio estructural (tablas y columnas nuevas) y aplicarlo de forma controlada.
+
+### 1. Inicializar Alembic
+
+```bash
+alembic init alembic
+```
+
+Este comando crea la carpeta `alembic/` con el archivo `env.py` y el archivo de configuración `alembic.ini` en la raíz del proyecto.
+
+> _Captura de la ejecución de `alembic init` en la terminal._
+
+![Alembic init](images/01.png)
+
+---
+
+### 2. Generar una migración automática
+
+```bash
+alembic revision --autogenerate -m "Crear tablas devices y loans"
+```
+
+Alembic compara los modelos de SQLAlchemy (`Device`, `Loan`, `Usuario`) contra el estado actual de la base de datos y genera automáticamente el script de migración con los cambios detectados.
+
+> _Captura de la generación de la migración con `--autogenerate`._
+
+![Alembic revision --autogenerate](images/02.png)
+
+---
+
+### 3. Aplicar la migración
+
+```bash
+alembic upgrade head
+```
+
+Este comando ejecuta todas las migraciones pendientes y deja la base de datos actualizada a la última versión (`head`), creando físicamente las tablas `usuarios`, `devices` y `loans` con sus respectivas relaciones y llaves foráneas.
+
+> _Captura de la aplicación exitosa de la migración con `alembic upgrade head`._
+
+![Alembic upgrade head](images/03.png)
+
+---
+
+## Ejecución del servidor
+
+```bash
+uvicorn app.main:app --reload
+```
+
+La API quedará disponible en: [http://127.0.0.1:8000](http://127.0.0.1:8000)
+
+Documentación Swagger UI: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+
+---
+
+## Estructura de tablas generadas
+
+El sistema cuenta con tres tablas relacionadas entre sí:
+
+| Tabla       | Descripción                                         | Relación                                  |
+|-------------|------------------------------------------------------|--------------------------------------------|
+| `usuarios`  | Usuarios del sistema                                  | Un usuario puede tener muchos `loans`      |
+| `devices`   | Dispositivos disponibles para préstamo                | Un dispositivo puede tener muchos `loans`  |
+| `loans`     | Registro de préstamos, vincula `usuarios` y `devices` | Pertenece a un usuario y a un dispositivo  |
+
+**`devices`**: `id`, `name`, `serial_number` (único), `device_type`, `brand`, `is_available`, `created_at`.
+
+**`loans`**: `id`, `user_id` (FK → `usuarios.id`), `device_id` (FK → `devices.id`), `loan_date`, `return_date`, `status` (`active` / `returned`).
+
+> _Captura de la estructura de las tablas generadas, vista desde un cliente SQLite (DB Browser, DBeaver, etc.)._
+
+![Estructura de tablas generadas](images/04.png)
+
+---
+
+## Swagger UI — Vista general
+
+> _Vista de todos los endpoints disponibles, organizados por tags: Users, Devices y Loans._
+
+![Swagger UI - Vista general](images/05.png)
+
+---
+
+## Tabla de endpoints
+
+| Método | Endpoint                  | Descripción                                          | Status         |
+|--------|----------------------------|------------------------------------------------------|----------------|
+| GET    | `/users`                   | Lista, filtra y ordena usuarios                       | 200 OK         |
+| GET    | `/users/{user_id}`         | Consulta un usuario por ID                            | 200 OK         |
+| POST   | `/users`                   | Registra un nuevo usuario                             | 201 Created    |
+| PUT    | `/users/{user_id}`         | Actualización completa de un usuario                  | 200 OK         |
+| PATCH  | `/users/{user_id}`         | Actualización parcial de un usuario                   | 200 OK         |
+| DELETE | `/users/{user_id}`         | Elimina un usuario                                    | 204 No Content |
+| POST   | `/devices`                 | Registra un nuevo dispositivo                         | 201 Created    |
+| GET    | `/devices`                 | Lista todos los dispositivos                          | 200 OK         |
+| GET    | `/devices/{device_id}`     | Consulta un dispositivo por ID                        | 200 OK         |
+| POST   | `/loans`                   | Registra el préstamo de un dispositivo a un usuario   | 201 Created    |
+| POST   | `/loans/{loan_id}/return`  | Registra la devolución de un dispositivo prestado     | 200 OK         |
+| GET    | `/loans`                   | Consulta historial de préstamos con JOIN y filtros    | 200 OK         |
+
+---
+
+## Evidencia de creación de Usuario, Dispositivo y Préstamo
+
+### Crear usuario — `POST /users`
+
+```
+POST http://127.0.0.1:8000/users
+Content-Type: application/json
+```
+
+```json
+{
+  "name": "Samuel Moreno",
+  "email": "samuel@mail.com",
+  "role": "admin",
+  "is_active": true
+}
+```
+
+> _Captura de Swagger UI ejecutando `POST /users` con respuesta 201 Created._
+
+![Creación de usuario](images/06.png)
+
+---
+
+### Crear dispositivo — `POST /devices`
+
+```
+POST http://127.0.0.1:8000/devices
+Content-Type: application/json
+```
+
+```json
+{
+  "name": "Laptop Dell Latitude",
+  "serial_number": "SN-2024-001",
+  "device_type": "laptop",
+  "brand": "Dell"
+}
+```
+
+> _Captura de Swagger UI ejecutando `POST /devices` con respuesta 201 Created._
+
+![Creación de dispositivo](images/07.png)
+
+---
+
+### Crear préstamo — `POST /loans`
+
+```
+POST http://127.0.0.1:8000/loans
+Content-Type: application/json
+```
+
+```json
+{
+  "user_id": 1,
+  "device_id": 1
+}
+```
+
+**Response `201 Created`:**
+```json
+{
+  "id": 1,
+  "user_id": 1,
+  "device_id": 1,
+  "loan_date": "2026-06-19T10:00:00Z",
+  "return_date": null,
+  "status": "active"
+}
+```
+
+Al crear el préstamo, el dispositivo queda marcado automáticamente como `is_available: false`.
+
+> _Captura de Swagger UI ejecutando `POST /loans` con respuesta 201 Created._
+
+![Creación de préstamo](images/08.png)
+
+---
+
+## Evidencia de consultas con JOIN
+
+El endpoint `GET /loans` usa `.join(Loan.user).join(Loan.device)` para traer en una sola consulta el préstamo junto con los datos completos del usuario y del dispositivo relacionado, gracias al schema anidado `LoanDetailResponse`.
+
+```
+GET http://127.0.0.1:8000/loans
+```
+
+**Response `200 OK`:**
+```json
+[
+  {
+    "id": 1,
+    "user_id": 1,
+    "device_id": 1,
+    "loan_date": "2026-06-19T10:00:00Z",
+    "return_date": null,
+    "status": "active",
+    "user": {
+      "id": 1,
+      "name": "Samuel Moreno",
+      "email": "samuel@mail.com",
+      "role": "admin",
+      "is_active": true
+    },
+    "device": {
+      "id": 1,
+      "name": "Laptop Dell Latitude",
+      "serial_number": "SN-2024-001",
+      "device_type": "laptop",
+      "brand": "Dell",
+      "is_available": false,
+      "created_at": "2026-06-19T09:50:00Z"
+    }
+  }
+]
+```
+
+> _Captura de la respuesta de `GET /loans` mostrando los datos anidados del usuario y del dispositivo (JOIN)._
+
+![Consultas con JOIN](images/09.png)
+
+---
+
+## Evidencia de filtros aplicados
+
+`GET /loans` acepta filtros opcionales por nombre de usuario y por estado del préstamo:
+
+```
+GET http://127.0.0.1:8000/loans?username=Samuel
+GET http://127.0.0.1:8000/loans?status=active
+GET http://127.0.0.1:8000/loans?username=Samuel&status=returned
+```
+
+- `username`: filtra usando coincidencia parcial (`ILIKE`) sobre el nombre del usuario.
+- `status`: filtra de forma exacta por `active` o `returned`.
+
+> _Captura de Swagger UI ejecutando `GET /loans` con los parámetros `username` y `status` aplicados._
+
+![Filtros aplicados](images/10.png)
+
+---
+
+## Evidencia de devolución de dispositivo
+
+```
+POST http://127.0.0.1:8000/loans/1/return
+```
+
+**Response `200 OK`:**
+```json
+{
+  "id": 1,
+  "user_id": 1,
+  "device_id": 1,
+  "loan_date": "2026-06-19T10:00:00Z",
+  "return_date": "2026-06-19T15:30:00Z",
+  "status": "returned"
+}
+```
+
+Al devolver el dispositivo, el `status` del préstamo cambia a `returned`, se registra `return_date`, y el dispositivo vuelve a marcarse como `is_available: true`, quedando disponible para un nuevo préstamo.
+
+> _Captura de Swagger UI ejecutando `POST /loans/{loan_id}/return` y su respuesta exitosa._
+
+![Devolución de dispositivo](images/11.png)
+
+---
+
+## Reflexión sobre la importancia de migraciones, relaciones y consultas avanzadas
+
+Incorporar Alembic al proyecto cambió por completo la forma de manejar la base de datos. Antes, cualquier cambio en los modelos dependía de borrar el archivo `.db` y dejar que `create_all()` lo regenerara desde cero, lo cual es completamente inviable en un entorno real donde ya existen datos guardados. Con Alembic, cada cambio estructural queda registrado como una migración versionada: se puede ver exactamente qué cambió, en qué orden, y aplicarlo o revertirlo de forma controlada con `upgrade` y `downgrade`. Eso es justamente lo que diferencia un proyecto de práctica de un sistema preparado para producción.
+
+Las relaciones entre tablas también le dieron sentido real al modelo de datos. Antes `users` era una entidad aislada; ahora un usuario puede tener muchos préstamos, un dispositivo puede tener muchos préstamos históricos, y cada préstamo conecta ambas entidades mediante llaves foráneas. Modelar esto con `relationship()` y `ForeignKey` en SQLAlchemy permitió que el ORM gestione automáticamente esas conexiones sin tener que escribir SQL manual para mantener la integridad referencial.
+
+Finalmente, las consultas con `JOIN` fueron las que más valor agregaron a la API. En lugar de hacer múltiples peticiones desde el cliente para armar el historial de préstamos (una para el préstamo, otra para el usuario, otra para el dispositivo), el endpoint `GET /loans` resuelve todo en una sola consulta gracias a `.join(Loan.user).join(Loan.device)` y al schema anidado `LoanDetailResponse`. Sumado a los filtros por `username` y `status`, esto demuestra cómo una API bien diseñada puede entregar información rica y lista para consumir, reduciendo la carga de trabajo del lado del cliente.
+
+---
+
+## Cabeceras HTTP personalizadas
+
+```
+X-App-Name: device_systems
+X-API-Version: 4.0
+```
+
+---
