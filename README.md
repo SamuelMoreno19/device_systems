@@ -266,7 +266,7 @@ DELETE http://127.0.0.1:8000/users/1
 
 > _Vista de la organización de carpetas y archivos del proyecto en el editor de código._
 
-![Estructura del proyecto](images/01.png)
+![Estructura del proyecto](images/alchemy/01.png)
 
 ---
 
@@ -274,7 +274,7 @@ DELETE http://127.0.0.1:8000/users/1
 
 > _Archivo `device_systems.db` generado automáticamente al arrancar el servidor, con la tabla `usuarios` visible desde un cliente SQLite._
 
-![Base de datos generada](images/02.png)
+![Base de datos generada](images/alchemy/02.png)
 
 ---
 
@@ -282,7 +282,7 @@ DELETE http://127.0.0.1:8000/users/1
 
 > _Vista de todos los endpoints disponibles en la documentación interactiva de FastAPI._
 
-![Swagger UI - Vista general](images/03.png)
+![Swagger UI - Vista general](images/alchemy/03.png)
 
 ---
 
@@ -290,7 +290,7 @@ DELETE http://127.0.0.1:8000/users/1
 
 > _Evidencia del endpoint GET /users retornando la lista de usuarios desde la base de datos._
 
-![GET /users](images/04.png)
+![GET /users](images/alchemy/04.png)
 
 ---
 
@@ -298,7 +298,7 @@ DELETE http://127.0.0.1:8000/users/1
 
 > _Evidencia de la consulta de un usuario específico mediante su ID como Path Parameter._
 
-![GET /users/{user_id}](images/05.png)
+![GET /users/{user_id}](images/alchemy/05.png)
 
 ---
 
@@ -306,7 +306,7 @@ DELETE http://127.0.0.1:8000/users/1
 
 > _Evidencia del registro exitoso de un nuevo usuario persistido en la base de datos, con respuesta 201 Created._
 
-![POST /users](images/06.png)
+![POST /users](images/alchemy/06.png)
 
 ---
 
@@ -314,7 +314,7 @@ DELETE http://127.0.0.1:8000/users/1
 
 > _Evidencia de la actualización completa de un usuario reemplazando todos sus campos, con respuesta 200 OK._
 
-![PUT /users/{user_id}](images/07.png)
+![PUT /users/{user_id}](images/alchemy/07.png)
 
 ---
 
@@ -322,7 +322,7 @@ DELETE http://127.0.0.1:8000/users/1
 
 > _Evidencia de la actualización parcial enviando solo los campos a modificar, con respuesta 200 OK._
 
-![PATCH /users/{user_id}](images/08.png)
+![PATCH /users/{user_id}](images/alchemy/08.png)
 
 ---
 
@@ -330,7 +330,7 @@ DELETE http://127.0.0.1:8000/users/1
 
 > _Evidencia de la eliminación permanente de un usuario de la base de datos, con respuesta 204 No Content._
 
-![DELETE /users/{user_id}](images/09.png)
+![DELETE /users/{user_id}](images/alchemy/09.png)
 
 ---
 
@@ -338,7 +338,7 @@ DELETE http://127.0.0.1:8000/users/1
 
 > _Evidencia del error al intentar registrar un correo ya existente, retornando 400 Bad Request._
 
-![Error correo duplicado](images/10.png)
+![Error correo duplicado](images/alchemy/10.png)
 
 ---
 
@@ -346,7 +346,7 @@ DELETE http://127.0.0.1:8000/users/1
 
 > _Evidencia del error al enviar datos que no cumplen las validaciones de Pydantic, retornando 422 Unprocessable Entity._
 
-![Error datos inválidos](images/11.png)
+![Error datos inválidos](images/alchemy/11.png)
 
 ---
 
