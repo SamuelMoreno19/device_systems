@@ -17,9 +17,9 @@ SessionLocal = sessionmaker(
 class Base(DeclarativeBase):
     pass
 
-from app.models.user_model import Usuario
-
 def create_tables():
+    # Colocamos un import para romper el ciclo infinito al arrancar
+    from app.models.user_model import Usuario
     Base.metadata.create_all(bind=engine)
 
 def get_db():

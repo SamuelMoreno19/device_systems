@@ -7,12 +7,11 @@ from fastapi import HTTPException, status
 class UserService:
     
     @staticmethod
-    @staticmethod
     def listar_usuarios(
         db: Session, 
         role: Optional[str] = None, 
         is_active: Optional[bool] = None,
-        order_by: Optional[str] = "name" # ⚠️ ESTE ERA EL QUE FALTABA
+        order_by: Optional[str] = "name" # ESTE ERA EL QUE FALTABA
     ) -> List[Usuario]:
         # 1. Preparamos la consulta base (Es como un SELECT * FROM usuarios)
         query = db.query(Usuario)
@@ -36,12 +35,16 @@ class UserService:
 
     @staticmethod
     def crear_usuario(db: Session, user_in: UserCreate) -> Usuario:
-        # Creamos la instancia del modelo con los datos validados de Pydantic
-        nuevo_usuario = Usuario(**user_in.model_dump())
-        
-        db.add(nuevo_usuario)      # 1. Lo agregamos a la sesión
-        db.commit()                # 2. Guardamos los cambios físicamente en el test.db
-        db.refresh(nuevo_usuario)  # 3. Refrescamos para que nos devuelva el ID autogenerado
+        nuevo_usuario = Usuario(
+            name=user_in.name,
+            email=user_in.email,
+            role=user_in.role,
+            is_active=user_in.is_active,
+            hashed_password=""  # Usuarios creados por /users no tienen contraseña, solo los de /auth/register
+        )
+        db.add(nuevo_usuario)
+        db.commit()
+        db.refresh(nuevo_usuario)
         return nuevo_usuario
 
     @staticmethod

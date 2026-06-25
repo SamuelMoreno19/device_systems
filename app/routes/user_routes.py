@@ -1,5 +1,7 @@
-from fastapi import APIRouter, Depends, Response, status, Query
+from fastapi import APIRouter, Depends, Request, Response, status, Query
 from typing import List, Optional
+from app.dependencies.auth_dependency import get_current_active_user
+from app.middlewares.request_middleware import limiter  # 👈 esto
 from sqlalchemy.orm import Session
 from app.schemas.user_schema import UserCreate, UserResponse, UserUpdatePartial
 from app.services.user_service import UserService
@@ -12,21 +14,28 @@ def agregar_firmas_ocultas(response: Response):
     response.headers["X-App-Name"] = "device_systems"
     response.headers["X-API-Version"] = "2.0"
 
-# GET: Listar, filtrar y ORDENAR en la DB (Fase 8 y 9)
+# GET: Listar, filtrar y ORDENAR en la DB
 @router.get("/", response_model=List[UserResponse], status_code=status.HTTP_200_OK, summary="Listar, filtrar y ordenar usuarios desde la DB")
+@limiter.limit("30/minute")  # 👈 esto
 def obtener_usuarios(
+    request: Request,
     response: Response,
     role: Optional[str] = Query(None, description="Filtrar por rol: admin, support, user"),
     is_active: Optional[bool] = Query(None, description="Filtrar por estado activo/inactivo"),
-    order_by: Optional[str] = Query("name", description="Ordenar por: 'name' o 'created_at'"), # ⚠️ NUEVO: Parámetro para cumplir la Fase 8
-    db: Session = Depends(get_db)
+    order_by: Optional[str] = Query("name", description="Ordenar por: 'name' o 'created_at'"),
+    db: Session = Depends(get_db),
+    current_user: Usuario = Depends(get_current_active_user)
 ):
     agregar_firmas_ocultas(response)
     return UserService.listar_usuarios(db, role, is_active, order_by)
 
 # GET: Buscar por ID
 @router.get("/{user_id}", response_model=UserResponse, status_code=status.HTTP_200_OK, summary="Buscar usuario por ID en la DB")
-def buscar_por_id(response: Response, usuario: Usuario = Depends(get_user_or_404)):
+def buscar_por_id(
+    response: Response,
+    usuario: Usuario = Depends(get_user_or_404),
+    current_user: Usuario = Depends(get_current_active_user)  # 👈 protección
+):
     agregar_firmas_ocultas(response)
     return usuario
 
